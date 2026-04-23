@@ -12,16 +12,12 @@ It enables clients (marketing teams, product teams, analysts) to:
 
 The system transforms raw stored data into a **searchable, flexible, and intelligent API**.
 
----
-
 ## Tech Stack
 
 * **Python (FastAPI)**
 * **PostgreSQL**
 * **SQLAlchemy (ORM)**
 * **Uvicorn (ASGI server)**
-
----
 
 ## Database Schema
 
@@ -40,8 +36,6 @@ Table: `profiles`
 | country_probability | FLOAT      | Confidence score                  |
 | created_at          | TIMESTAMP  | UTC ISO 8601                      |
 
----
-
 ## Data Seeding
 
 The database is seeded with **2026 profiles from a JSON file**.
@@ -59,11 +53,7 @@ The database is seeded with **2026 profiles from a JSON file**.
 python seed/seed.py
 ```
 
----
-
 ## API Endpoints
-
----
 
 ###  GET `/api/profiles`
 
@@ -94,9 +84,6 @@ Supports **filtering, sorting, and pagination** in one request.
 ```
 /api/profiles?gender=male&country_id=NG&min_age=25&sort_by=age&order=desc&page=1&limit=10
 ```
-
----
-
 ### GET `/api/profiles/search`
 
 Performs **natural language query parsing** and converts it into filters.
@@ -106,9 +93,6 @@ Performs **natural language query parsing** and converts it into filters.
 ```
 /api/profiles/search?q=young males from nigeria
 ```
-
----
-
 #  Natural Language Parsing Approach
 
 This system uses a **rule-based parser** (no AI/LLMs).
@@ -119,8 +103,6 @@ The query string is:
 2. Matched against predefined keywords
 3. Translated into structured filters
 
----
-
 ##  Supported Keywords & Mappings
 
 ### Gender
@@ -129,8 +111,6 @@ The query string is:
 | ------- | --------------- |
 | male    | `gender=male`   |
 | female  | `gender=female` |
-
----
 
 ### Age Logic
 
@@ -143,8 +123,6 @@ Example:
 
 * "females above 30" → `gender=female`, `min_age=30`
 
----
-
 ### Age Group
 
 | Keyword  | Filter               |
@@ -153,8 +131,6 @@ Example:
 | teenager | `age_group=teenager` |
 | adult    | `age_group=adult`    |
 | senior   | `age_group=senior`   |
-
----
 
 ###  Country Mapping
 
@@ -169,8 +145,6 @@ A dictionary maps country names to ISO codes:
 Example:
 
 * "people from angola" → `country_id=AO`
-
----
 
 ##  Combined Queries
 
@@ -188,8 +162,6 @@ Becomes:
 gender=male AND age_group=adult AND country_id=KE
 ```
 
----
-
 ##  Unrecognized Queries
 
 If no valid keywords are found:
@@ -200,8 +172,6 @@ If no valid keywords are found:
   "message": "Unable to interpret query"
 }
 ```
-
----
 
 #  Limitations of the Parser
 
@@ -217,15 +187,11 @@ This is a **rule-based system**, so it has some constraints:
 * Logical OR conditions
 * Advanced NLP understanding
 
----
-
 ### Edge Cases
 
 * "male and female" → may override one gender
 * "above" parsing depends on correct number format
 * Only predefined countries are recognized
-
----
 
 # ⚙️ Error Handling
 
@@ -245,8 +211,6 @@ All errors follow this format:
 * **404** → Not found
 * **Invalid query parameters** → Wrong filters
 
----
-
 # Additional Requirements Implemented
 
 * CORS enabled:
@@ -261,15 +225,11 @@ Access-Control-Allow-Origin: *
 * ✅ Combined filtering logic
 * ✅ Structured response format
 
----
-
 #  Performance Considerations
 
 * Query filtering is done at the database level (no full-table scans)
 * Indexed fields (e.g., name) improve lookup speed
 * Pagination prevents large data loads
-
----
 
 #  Running the Project
 
@@ -291,13 +251,9 @@ uvicorn app.main:app --reload
 http://127.0.0.1:8000/docs
 ```
 
----
-
 # Deployment
 
 The API is deployed on a cloud platform (AWS).
-
----
 
 # Summary
 
