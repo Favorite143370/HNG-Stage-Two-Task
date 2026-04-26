@@ -14,9 +14,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(BASE_DIR, "profiles.json")
 
 with open(file_path, "r", encoding="utf-8") as f:
-    data = json.load(f)
+    data = json.load(f)["profiles"]
 
-# ✅ FIX: handle stringified JSON items safely
+# handle stringified JSON items safely
 for item in data:
 
     # If item is a string, convert it into dict

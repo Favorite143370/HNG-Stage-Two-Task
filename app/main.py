@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from sqlalchemy.orm import Session
-from .database import SessionLocal
-from .models import Profile
+from app.database import SessionLocal
+from app.models import Profile
 from fastapi.middleware.cors import CORSMiddleware
-from .parser import parse_query
-from .schemas import ProfileResponse
+from app.parser import parse_query
+from app.schemas import ProfileResponse
 
 app = FastAPI()
 
@@ -17,7 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ✅ FIXED ENDPOINT
+# ENDPOINT
 @app.get("/api/profiles")
 def get_profiles(
     gender: str = None,
@@ -78,15 +78,15 @@ def get_profiles(
         "data": [ProfileResponse.model_validate(r) for r in results]
     }
 
-# ✅ SEARCH ENDPOINT
+# SEARCH ENDPOINT
 @app.get("/api/profiles/search")
 def search_profiles(q: str, page: int = 1, limit: int = 10):
     db = SessionLocal()
 
     filters = parse_query(q)
+    query = db.query(Profile)
 
-    if not filters:
-        return {"status": "error", "message": "Unable to interpret query"}
+# STRUCTURED FILTERS
 
     query = db.query(Profile)
 
@@ -104,6 +104,10 @@ def search_profiles(q: str, page: int = 1, limit: int = 10):
 
     if "country_id" in filters:
         query = query.filter(Profile.country_id == filters["country_id"])
+
+# FREE-TEXT SEARCH
+    if q:
+            query = query.filter(Profile.name.ilike(f"%{q}%"))    
 
     total = query.count()
 

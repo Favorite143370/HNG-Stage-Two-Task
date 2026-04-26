@@ -199,8 +199,12 @@ All errors follow this format:
 
 ```json
 {
-  "status": "error",
-  "message": "..."
+  {
+  "status": "success",
+  "page": 1,
+  "limit": 10,
+  "total": 0,
+  "data": []
 }
 ```
 
@@ -269,7 +273,7 @@ It transforms static demographic data into a **fully queryable intelligence syst
 
 ---
 
-# 👨‍💻 Author
+# Author
 
 Backend Wizards Stage 2 Submission
 Insighta Labs Assessment
