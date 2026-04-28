@@ -10,7 +10,7 @@ app = FastAPI()
 
 @app.get("/")
 def root():
-    return {"message": "Insighta API is running"}
+    return {"status": "ok"}
 
 # CORS (REQUIRED)
 app.add_middleware(
