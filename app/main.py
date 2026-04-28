@@ -1,12 +1,15 @@
 from fastapi import FastAPI
 from sqlalchemy.orm import Session
-from app.database import SessionLocal
+from app.database import SessionLocal, Base, engine
 from app.models import Profile
 from fastapi.middleware.cors import CORSMiddleware
 from app.parser import parse_query
 from app.schemas import ProfileResponse
 
 app = FastAPI()
+
+# CREATE TABLES (IMPORTANT for SQLite)
+Base.metadata.create_all(bind=engine)
 
 @app.get("/")
 def root():
