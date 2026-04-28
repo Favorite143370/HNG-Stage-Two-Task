@@ -8,6 +8,10 @@ from app.schemas import ProfileResponse
 
 app = FastAPI()
 
+@app.get("/")
+def root():
+    return {"message": "Insighta API is running"}
+
 # CORS (REQUIRED)
 app.add_middleware(
     CORSMiddleware,
