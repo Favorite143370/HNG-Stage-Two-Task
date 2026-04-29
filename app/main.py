@@ -6,6 +6,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.parser import parse_query
 from app.schemas import ProfileResponse
 
+import json
+import os
+
 app = FastAPI()
 
 # CREATE TABLES (IMPORTANT for SQLite)
@@ -23,6 +26,41 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# AUTO SEED ON STARTUP
+@app.on_event("startup")
+def load_seed_data():
+    db = SessionLocal()
+
+    try:
+        existing = db.query(Profile).first()
+        if existing:
+            return
+
+        file_path = os.path.join(os.path.dirname(__file__), "seed/profile.json")
+
+        with open(file_path, "r") as f:
+            data = json.load(f)
+
+        for item in data:
+            profile = Profile(
+                name=item.get("name"),
+                gender=item.get("gender"),
+                gender_probability=item.get("gender_probability"),
+                age=item.get("age"),
+                age_group=item.get("age_group"),
+                country_id=item.get("country_id"),
+                country_name=item.get("country_name"),
+                country_probability=item.get("country_probability")
+            )
+            db.add(profile)
+
+        db.commit()
+
+    except Exception as e:
+        print("Seed loading failed:", e)
+
+    finally:
+        db.close()
 
 # ENDPOINT
 @app.get("/api/profiles")
@@ -94,8 +132,6 @@ def search_profiles(q: str, page: int = 1, limit: int = 10):
     query = db.query(Profile)
 
 # STRUCTURED FILTERS
-
-    query = db.query(Profile)
 
     if "gender" in filters:
         query = query.filter(Profile.gender == filters["gender"])
